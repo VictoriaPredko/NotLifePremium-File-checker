@@ -1,0 +1,4 @@
+@import "variables";
+input.ng-invalid {
+  border: 1px solid $danger;
+}

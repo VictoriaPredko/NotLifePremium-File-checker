@@ -1,0 +1,75 @@
+<h1 class="text-center">NotLifePremium-File checker</h1>
+<div class="card" style="width: 25rem">
+  <div class="card-body">
+    <input
+      type="file"
+      style="display: inline-block"
+      (change)="uploadFile($event)"
+      placeholder="Upload file"
+      accept=".xlsx"
+    />
+    <div *ngIf="fileProcessingError" class="error-message">
+      Error while processing
+    </div>
+  </div>
+</div>
+<div *ngIf="form" class="mt-3">
+  <div class="error-message">The errors were found in file</div>
+  <div ngbDropdown class="d-inline-block">
+    <button
+      type="button"
+      class="btn btn-outline-primary"
+      id="dropdownBasic1"
+      ngbDropdownToggle
+    >
+      {{ activeErrorRow || "Go to row" }}
+    </button>
+    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+      <button ngbDropdownItem (click)="selectRow()">Empty selection</button>
+      <button
+        ngbDropdownItem
+        *ngFor="let errorControl of errorControls"
+        (click)="selectRow(errorControl)"
+      >
+        {{ errorControl }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<table [formGroup]="form" *ngIf="form" class="table table-striped mt-3" #table>
+  <thead>
+    <tr>
+      <th *ngFor="let column of columns">
+        {{ column }}
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      *ngFor="let row of controlNames"
+      [formGroupName]="row"
+      [id]="rowPrefix + row"
+      [ngClass]="{ selected: activeErrorRow === row }"
+    >
+      <td *ngFor="let columnKey of columnKeys">
+        <input
+          [formControlName]="columnKey"
+          [ngClass]="{
+            'error-column':
+              columnKey === 'col1' &&
+              (activeErrorRow
+                ? activeErrorRow === row
+                : errorControls.includes(row))
+          }"
+        />
+        <span
+          class="error-message"
+          *ngIf="getTableErrorControls(row).includes(columnKey)"
+          >wrong field</span
+        >
+      </td>
+    </tr>
+  </tbody>
+</table>
+<button class="btn btn-primary" *ngIf="form?.valid">Next step</button>

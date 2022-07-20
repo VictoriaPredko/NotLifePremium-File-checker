@@ -1,0 +1,26 @@
+@import "../../../../assets/styles/variables";
+
+td {
+  width: 100px;
+  height: 60px;
+  position: relative;
+  input {
+    width: 100%;
+    &.error-column {
+      background-color: $red;
+      color: #ffffff;
+    }
+  }
+  .error-message {
+    font-size: 10px;
+    position: absolute;
+    bottom: 0;
+    left: 10px;
+  }
+}
+.error-message {
+  color: $red;
+}
+tr.selected {
+  background-color: #ff000033;
+}
