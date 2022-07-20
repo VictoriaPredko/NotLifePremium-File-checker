@@ -24,3 +24,11 @@ td {
 tr.selected {
   background-color: #ff000033;
 }
+.fixed-window {
+  top: 20px;
+  right: 20px;
+  width: 300px;
+  z-index: 999;
+  background-color: $red;
+  color: #fff
+}

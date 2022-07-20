@@ -1,22 +1,22 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import * as XLSX from 'xlsx';
-import { NotLifePremium } from '../../models';
+import { Component, ElementRef, ViewChild } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import * as XLSX from "xlsx";
+import { NotLifePremium } from "../../models";
 @Component({
-  selector: 'app-not-life-premium-file-checker',
-  templateUrl: './not-life-premium-file-checker.component.html',
-  styleUrls: ['./not-life-premium-file-checker.component.scss'],
+  selector: "app-not-life-premium-file-checker",
+  templateUrl: "./not-life-premium-file-checker.component.html",
+  styleUrls: ["./not-life-premium-file-checker.component.scss"],
 })
 export class NotLifePremiumFileCheckerComponent {
-  rowPrefix = 'tr-';
+  rowPrefix = "tr-";
 
   form: FormGroup | undefined;
   columns: (string | number)[] = [];
   columnKeys: (keyof NotLifePremium)[] = [];
-  activeErrorRow = '';
+  activeErrorRow = "";
   fileProcessingError = false;
 
-  @ViewChild('table') table!: ElementRef<HTMLTableElement>;
+  @ViewChild("table") table!: ElementRef<HTMLTableElement>;
 
   get controlNames() {
     return Object.keys(this.form?.controls || {}) || [];
@@ -49,7 +49,7 @@ export class NotLifePremiumFileCheckerComponent {
 
   selectRow(rowId?: string) {
     if (!rowId) {
-      this.activeErrorRow = '';
+      this.activeErrorRow = "";
       return;
     }
     this.activeErrorRow = rowId;
@@ -57,7 +57,7 @@ export class NotLifePremiumFileCheckerComponent {
   }
 
   jumpToSelectedRiow() {
-    this.table.nativeElement.children[1].children
+    this.table?.nativeElement.children[1].children
       .namedItem(this.rowPrefix + this.activeErrorRow)
       ?.scrollIntoView();
   }
@@ -72,13 +72,13 @@ export class NotLifePremiumFileCheckerComponent {
         const arr = new Array();
         for (let i = 0; i != data.length; ++i)
           arr[i] = String.fromCharCode(data[i]);
-        const bstr = arr.join('');
-        const workbook = XLSX.read(bstr, { type: 'binary' });
+        const bstr = arr.join("");
+        const workbook = XLSX.read(bstr, { type: "binary" });
         const first_sheet_name = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[first_sheet_name];
         const rowData = XLSX.utils
           .sheet_to_json(worksheet, { raw: true })
-          .slice(5);
+          .slice(5) as { [key: string]: string | number }[];
         const columns = Object.values(
           XLSX.utils
             .sheet_to_json(worksheet, { raw: true })
@@ -87,21 +87,22 @@ export class NotLifePremiumFileCheckerComponent {
         if (columns.length !== 15) {
           throw new Error();
         }
+        this.columns = columns;
 
         rowData.forEach((row) => {
-          const values = Object.values(row as any) as (string | number)[];
-          const notLifePremiumRow: NotLifePremium = values.reduce(
-            (acc, curr, index) => {
-              (acc[('col' + (index + 1)) as keyof NotLifePremium] as
+          const notLifePremiumRow: NotLifePremium = columns.reduce(
+            (acc, _, index) => {
+              const cellPrefix = "__EMPTY_";
+              const currId = cellPrefix + (index + 1);
+              (acc[("col" + (index + 1)) as keyof NotLifePremium] as
                 | string
-                | number) = curr;
-
+                | number) = row[currId];
               return acc;
             },
             {} as NotLifePremium
           );
           this._addControlToFormGroup(
-            notLifePremiumRow.col1 + '',
+            notLifePremiumRow.col1 + "",
             notLifePremiumRow
           );
 
@@ -125,7 +126,7 @@ export class NotLifePremiumFileCheckerComponent {
     this.fileProcessingError = false;
     this.columns = [];
     this.columnKeys = [];
-    this.activeErrorRow = '';
+    this.activeErrorRow = "";
   }
 
   private _buildRowFormGroup(input?: NotLifePremium) {
@@ -134,16 +135,16 @@ export class NotLifePremiumFileCheckerComponent {
         { value: input?.col1 || 0, disabled: true },
         this._getValidatorsForNumberType(),
       ],
-      col2: [input?.col2 || '', [Validators.required]],
-      col3: [input?.col3 || '', [Validators.required]],
-      col4: input?.col4 || '',
-      col5: input?.col5 || '',
-      col6: [input?.col6 || '', [Validators.required]],
-      col7: [input?.col7 || '', [Validators.required]],
-      col8: input?.col8 || '',
-      col9: input?.col9 || '',
-      col10: input?.col10 || '',
-      col11: input?.col11 || '',
+      col2: [input?.col2 || "", [Validators.required]],
+      col3: [input?.col3 || "", [Validators.required]],
+      col4: input?.col4 || "",
+      col5: input?.col5 || "",
+      col6: [input?.col6 || "", [Validators.required]],
+      col7: [input?.col7 || "", [Validators.required]],
+      col8: input?.col8 || "",
+      col9: input?.col9 || "",
+      col10: input?.col10 || "",
+      col11: input?.col11 || "",
       col12: [input?.col12 || 0, this._getValidatorsForNumberType()],
       col13: [input?.col13 || 0, this._getValidatorsForNumberType()],
       col14: [input?.col14 || 0, this._getValidatorsForNumberType()],
@@ -161,7 +162,7 @@ export class NotLifePremiumFileCheckerComponent {
   private _getValidatorsForNumberType() {
     return [
       Validators.required,
-      Validators.pattern('^[0-9]*$'),
+      Validators.pattern("^[0-9]*$"),
       Validators.minLength(1),
     ];
   }

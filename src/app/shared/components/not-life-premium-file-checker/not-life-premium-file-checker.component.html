@@ -13,26 +13,28 @@
     </div>
   </div>
 </div>
-<div *ngIf="form" class="mt-3">
-  <div class="error-message">The errors were found in file</div>
-  <div ngbDropdown class="d-inline-block">
-    <button
-      type="button"
-      class="btn btn-outline-primary"
-      id="dropdownBasic1"
-      ngbDropdownToggle
-    >
-      {{ activeErrorRow || "Go to row" }}
-    </button>
-    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-      <button ngbDropdownItem (click)="selectRow()">Empty selection</button>
+<div *ngIf="form" class="mt-3 card position-fixed fixed-window">
+  <div class="card-body">
+    <div>The errors were found in file: </div>
+    <div ngbDropdown class="d-inline-block">
       <button
-        ngbDropdownItem
-        *ngFor="let errorControl of errorControls"
-        (click)="selectRow(errorControl)"
+        type="button"
+        class="btn bg-light"
+        id="dropdownBasic1"
+        ngbDropdownToggle
       >
-        {{ errorControl }}
+        {{ activeErrorRow || "Go to row" }}
       </button>
+      <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+        <button ngbDropdownItem (click)="selectRow()">Empty selection</button>
+        <button
+          ngbDropdownItem
+          *ngFor="let errorControl of errorControls"
+          (click)="selectRow(errorControl)"
+        >
+          {{ errorControl }}
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -40,7 +42,7 @@
 <table [formGroup]="form" *ngIf="form" class="table table-striped mt-3" #table>
   <thead>
     <tr>
-      <th *ngFor="let column of columns">
+      <th scope="col" *ngFor="let column of columns">
         {{ column }}
       </th>
     </tr>
